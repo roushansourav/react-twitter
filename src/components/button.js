@@ -1,12 +1,13 @@
-import React from 'react';
+import React from "react";
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 
-const styles = makeStyles(theme=>({
+const styles = makeStyles((theme) => ({
   root: {
     display: "block",
     margin: "auto",
-    marginTop:props=>props.home?'2rem':"0",
+    marginTop: (props) => (props.home ? "2rem" : "0"),
     boxShadow: "none",
     textTransform: "none",
     fontSize: 16,
@@ -43,9 +44,12 @@ const styles = makeStyles(theme=>({
     },
   },
 }));
-  function BootStrapButton(props){
-    const classes =styles(props);
-    const {home,...rest}=props;
-    return <Button classes={{root:classes.root}} {...rest}/>
-  }
+function BootStrapButton(props) {
+  const classes = styles(props);
+  const { home, ...rest } = props;
+  return <Button classes={{ root: classes.root }} {...rest} />;
+}
+BootStrapButton.propTypes = {
+  home: PropTypes.bool,
+};
 export default BootStrapButton;

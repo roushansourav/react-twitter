@@ -1,73 +1,70 @@
 import React, { useState } from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import SearchBar from "./search";
 import _ from "lodash";
-import axios from "axios";
-import Card from './card';
 import { makeStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { getTweets, getUsers, setSearch } from "../redux/actions";
+import Tweets from "./tweets";
+import PropTypes from "prop-types";
 
-const styles = makeStyles(theme=>({
-  searchContainer:{
-    height:'120px',
-    [theme.breakpoints.down('md')]:{
+const styles = makeStyles((theme) => ({
+  searchContainer: {
+    height: "120px",
+    [theme.breakpoints.down("md")]: {
       height: "250px",
     },
-  }
+  },
 }));
 
-function Tweets() {
-  const [search, setSearch] = useState("");
-  const [suggestion, setSuggestion] = useState(null);
+function Tweet(props) {
+  const {
+    getTweets,
+    suggestions = {},
+    getUsers,
+    search = "",
+    tweets = [],
+    setSearch,
+  } = props;
   const [suggestionFlag, setSuggestionFlag] = useState(false);
-  const [tweets,setTweets]=useState([]);
-  const classes=styles();
+  const classes = styles();
+
   const debounceSearch = React.useRef(
     _.debounce((search) => {
-      console.log(search);
-      search.length >= 1 &&
-        axios
-          .get(`http://localhost:4000/users?q=${encodeURIComponent(search)}`)
-          .then((res) => {
-            if (!search.startsWith("#")) setSuggestion(res.data.payload);
-            console.log(res.data);
-          })
-          .catch((err) => console.error(err));
-    }, 500)
+      getUsers(search);
+    }, 200)
   );
 
   const onChangeHandler = (e) => {
     e.persist();
     let searchString = e.target.value;
-    setSuggestionFlag(true);
     setSearch(searchString);
-    if (!!searchString) debounceSearch.current(searchString);
+    if (searchString && !searchString.startsWith("#")) {
+      setSuggestionFlag(true);
+      debounceSearch.current(searchString);
+    } else {
+      if (suggestionFlag) setSuggestionFlag(false);
+    }
   };
+
   const onClickSearchHandler = (e) => {
-    search.length >= 1 &&
-      axios
-        .get(`http://localhost:4000/tweets?q=${encodeURIComponent(search)}`)
-        .then((res) => {
-          console.log(res.data);
-          setTweets(res.data.payload.statuses);
-        });
+    search.length > 1 && getTweets(search);
+    setSuggestionFlag(false);
   };
-  const onClickSuggestionHandler = (val,username) => {
+
+  const onClickSuggestionHandler = (val, userId) => {
     setSearch(val);
     setSuggestionFlag(false);
-    search.length >= 1 &&
-      axios
-        .get(`http://localhost:4000/tweets?q=${encodeURIComponent('from:' + username)}`)
-        .then((res) => {
-          console.log(res.data);
-          setTweets(res.data.payload.statuses);
-        });
+    search.length >= 1 && getTweets(userId);
   };
+
   return (
     <Grid container>
       <Grid item container xs={12} className={classes.searchContainer}>
         <SearchBar
           {...{
-            suggestion,
+            suggestions: suggestions.users,
             search,
             onChangeHandler,
             onClickSearchHandler,
@@ -76,15 +73,24 @@ function Tweets() {
           }}
         />
       </Grid>
-      {tweets.length? <Grid item xs={12} style={{padding: " 2rem 1rem",backgroundColor:'rgb(0,0,0,0.05)'}}>
-        <Grid container justify="center" spacing={3} style={{padding:'0 1rem'}}>
-          {tweets.map(t=><Card key={t.id} {...t}/>)}
-        </Grid>
-      </Grid>:
-      <Typography align='center' style={{width:'100%'}}>Sorry,No tweets founds</Typography>
-      }
+      <Tweets tweets={tweets} search={search} suggestions={suggestions.users} />
     </Grid>
   );
 }
 
-export default Tweets;
+const mapStateToProps = ({ users, tweets, search }) => ({
+  suggestions: users,
+  tweets,
+  search: search.search,
+});
+Tweet.propTypes = {
+  getTweets: PropTypes.func,
+  suggestions: PropTypes.object,
+  getUsers: PropTypes.func,
+  search: PropTypes.string,
+  tweets: PropTypes.object,
+  setSearch: PropTypes.func,
+};
+export default connect(mapStateToProps, (dispatch) =>
+  bindActionCreators({ getTweets, getUsers, setSearch }, dispatch)
+)(Tweet);

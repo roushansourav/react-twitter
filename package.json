@@ -2,6 +2,7 @@
   "name": "owners-town",
   "version": "0.1.0",
   "private": true,
+  "main": "server/index.js",
   "dependencies": {
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
@@ -17,6 +18,7 @@
     "lodash": "^4.17.15",
     "morgan": "^1.10.0",
     "oauth": "^0.9.15",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
@@ -28,12 +30,14 @@
     "shortid": "^2.2.15"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build & npm run serve",
+    "start": "npm run serve",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "dev-start": "react-scripts start",
     "serve": "node server/index.js",
-    "dev-serve": "nodemon server/index.js"
+    "dev-serve": "nodemon server/index.js",
+    "heroku-postbuild": "npm run build"
   },
   "eslintConfig": {
     "extends": "react-app"
