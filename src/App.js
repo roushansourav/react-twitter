@@ -10,8 +10,8 @@ function App() {
     <Provider store={store}>
       <Router>
         <Switch>
-          <Route exact path="/" component={Home} />
           <Route exact path="/tweets" component={Tweet} />
+          <Route path="/" component={Home} />
         </Switch>
       </Router>
     </Provider>

@@ -10,7 +10,7 @@ export const getTweets = (search) => {
     //Loading
     dispatch({ type: FETCH_TWEETS + L });
     axios
-      .get(`/tweets?q=${encodeURIComponent(search)}`)
+      .get(`/api/tweets?q=${encodeURIComponent(search)}`)
       .then((res) => {
         dispatch({ type: FETCH_TWEETS, tweets: res.data.payload });
       })
@@ -26,7 +26,7 @@ export const getUsers = (search) => {
     //Loading
     dispatch({ type: FETCH_USERS + L });
     axios
-      .get(`/users?q=${encodeURIComponent(search)}`)
+      .get(`/api/users?q=${encodeURIComponent(search)}`)
       .then((res) => {
         dispatch({ type: FETCH_USERS, users: res.data.payload });
       })

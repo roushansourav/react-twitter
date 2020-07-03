@@ -20,7 +20,8 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/static", express.static(path.join(__dirname, "../build/static")));
-app.get("/tweets", (req, res) => {
+
+app.get("/api/tweets", (req, res) => {
   const query = req.query.q || '';
   if (query.startsWith("#")) {
     call(
@@ -49,7 +50,7 @@ app.get("/tweets", (req, res) => {
   }
 });
 
-app.get("/users", (req, res) => {
+app.get("/api/users", (req, res) => {
   const query = req.query.q;
   call(
     BASE_URL,
@@ -67,7 +68,10 @@ app.get("/users", (req, res) => {
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../build/index.html"));
 });
-
+app.get("/*", (req, res) => {
+  //res.send('server is running');
+  res.sendFile(path.join(__dirname, "../build/index.html"));
+});
 app.listen(PORT, () => {
   console.log(`Server is running at ${PORT}`);
 });

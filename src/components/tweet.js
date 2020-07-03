@@ -8,6 +8,7 @@ import { bindActionCreators } from "redux";
 import { getTweets, getUsers, setSearch } from "../redux/actions";
 import Tweets from "./tweets";
 import PropTypes from "prop-types";
+import {Helmet} from 'react-helmet';
 
 const styles = makeStyles((theme) => ({
   searchContainer: {
@@ -61,6 +62,13 @@ function Tweet(props) {
 
   return (
     <Grid container>
+      <Helmet>
+        <meta charset="UTF-8"/>
+        <meta name="description" content="Tweets from specific user or hashtag tweets"/>
+        <meta name="keywords" content="HTML, CSS, JavaScript"/>
+        <meta name="author" content="Roushan Sourav"/>
+        <title>Tweets</title>
+      </Helmet>
       <Grid item container xs={12} className={classes.searchContainer}>
         <SearchBar
           {...{
